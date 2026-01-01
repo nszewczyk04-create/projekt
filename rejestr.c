@@ -17,7 +17,33 @@ typedef struct rejestr
     int id_wlasciciela;
 }implant;
 
-const char*
+const char* status(StatusLegalnosci s){
+    switch (s)
+    {
+    case LEGALNY:
+        return "LEGALNY";
+        break;
+    case NIELEGALNY:
+        return "NIELEGALNY";
+        break;
+    case SZARA_STREFA:
+        return "SZARA_STREFA";
+        break;
+    default:
+        return "NIEZNANY"
+        break;
+    }
+}
+
+int unikalny(implant* baza, int rozmiar, const char* nazwa, int id_wlasciciela){
+    for (int i = 0; i < rozmiar; i++){
+        if (strcmp(baza[i].nazwa,nazwa) == 0 && baza[i].id_wlasciciela == id_wlasciciela){
+            return 0;
+        }
+    }
+    return 1;
+}
+
 
 
 
