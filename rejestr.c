@@ -17,6 +17,7 @@ typedef struct rejestr
     int id_wlasciciela;
 }implant;
 
+const char*
 
 
 
