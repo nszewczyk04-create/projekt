@@ -107,9 +107,34 @@ implant* stworz_implant(implant *pierwszy) {
 void wypiszliste(implant *pierwszy) {
     implant *nowy_implant = pierwszy;
     while (nowy_implant != NULL) {
-        printf("%s\n %s\n %d\n %d\n %d\n %d\n",nowy_implant->nazwa, nowy_implant->producent, nowy_implant->poziom_ryzyka, nowy_implant->zapotrzebowanie_energetyczne, nowy_implant->status, nowy_implant->id_wlasciciela);
+        printf("Nazwa:%s\nProducent:%s\nPoziom ryzyka:%d\nZapotrzebowanie energetyczne:%d\nStatus:%d\nId wlasciciela:%d\n",nowy_implant->nazwa, nowy_implant->producent, nowy_implant->poziom_ryzyka, nowy_implant->zapotrzebowanie_energetyczne, nowy_implant->status, nowy_implant->id_wlasciciela);
         nowy_implant = nowy_implant->nastepny;
     }
+}
+
+void wypisz_implant(implant *implant_do_wypisania) {
+    printf("Nazwa: %s\n", implant_do_wypisania->nazwa);
+    printf("Producent: %s\n", implant_do_wypisania->producent);
+    printf("Poziom ryzyka: %d\n",implant_do_wypisania->poziom_ryzyka);
+    printf("Zapotrzebowanie energetyczne: %d\n",implant_do_wypisania->zapotrzebowanie_energetyczne);
+    printf("Status: ");
+    switch (implant_do_wypisania->status) {
+        case 0:
+            printf("Legalny\n");
+            break;
+        case 1:
+            printf("Nielegalny\n");
+            break;
+        case 2:
+            printf("Szara strefa\n");
+            break;
+        default:
+            printf("Nieznany\n");
+            break;
+    }
+
+    printf("Id wlasciciela: %d\n",implant_do_wypisania->id_wlasciciela);
+
 }
 
 void wyszukaj_implant(implant *pierwszy) {
@@ -145,29 +170,136 @@ void wyszukaj_implant(implant *pierwszy) {
     }
 }
 
-void wypisz_implant(implant *implant_do_wypisania) {
-    printf("Nazwa: %s\n", implant_do_wypisania->nazwa);
-    printf("Producent: %s\n", implant_do_wypisania->producent);
-    printf("Poziom ryzyka: %d\n",implant_do_wypisania->poziom_ryzyka);
-    printf("Zapotrzebowanie energetyczne: %d\n",implant_do_wypisania->zapotrzebowanie_energetyczne);
-    printf("Status: ");
-    switch (implant_do_wypisania->status) {
-        case 0:
-            printf("Legalny\n");
-            break;
-        case 1:
-            printf("Nielegalny\n");
-            break;
-        case 2:
-            printf("Szara strefa\n");
-            break;
-        default:
-            printf("Nieznany\n");
-            break;
+void zmodyfikuj_implant(implant *pierwszy) {
+    if (pierwszy == NULL) {
+        printf("Lista jest pusta\n");
+        return;
     }
+    char implant_do_modyfikacji[100];
+    printf("Podaj nazwe implantu do modyfikacji:\n");
+    scanf("%s", implant_do_modyfikacji);
 
-    printf("Id wlasciciela: %d\n",implant_do_wypisania->id_wlasciciela);
+    implant *temp = pierwszy;
+    while (temp != NULL) {
+        if (strcmp(temp->nazwa, implant_do_modyfikacji) == 0) {
+            int opcja;
+            printf("Wybierz parametr do modyfikacji:\n1.Producent\n2.Poziom ryzyka\n3.Zapotrzebowanie energetyzne\n4.Status legalnosci\n");
+            scanf("%d", &opcja);
+            switch (opcja) {
+                case 1:
+                    printf("Producent:\n");
+                    scanf("%d", &temp->producent);
+                    break;
+                case 2:
+                    printf("Poziom ryzyka:\n");
+                    scanf("%d", &temp->poziom_ryzyka);
+                    break;
+                case 3:
+                    printf("Zapotrzebowanie energetyzne:\n");
+                    scanf("%d", &temp->zapotrzebowanie_energetyczne);
+                    break;
+                case 4:
+                    printf("Status legalnosci:\n");
+                    scanf("%d", &temp->status);
+                    break;
+                default:
+                    printf("Nieznaleziono opcji\n");
+            }
+            printf("Zmodyfikowano pomyslnie\n");
+            wypisz_implant(temp);
+            return;
+        }
+        temp = temp->nastepny;
+    }
+    printf("Nie znaleziono implantu o podanej nazwie\n");
+}
 
+implant* usun_implant(implant *pierwszy) {
+    if (pierwszy == NULL) {
+        printf("Lista jest pusta\n");
+        return NULL;
+    }
+    char implant_do_usuniecia[100];
+    printf("Podaj nazwe implantu do usuniecia:\n");
+    scanf("%s", implant_do_usuniecia);
+
+    implant *temp = pierwszy;
+    implant *poprzedni = NULL;
+    while (temp != NULL && strcmp(temp->nazwa, implant_do_usuniecia) != 0) {
+        poprzedni = temp;
+        temp = temp->nastepny;
+    }
+    if (temp == NULL) {
+        printf("Nie znaleziono implantu o podanej nazwie\n");
+        return pierwszy;
+    }
+    if (temp->status == NIELEGALNY) {
+        printf("Nie mozna usunac implantu z statusem NIELEGALNY!\n");
+        return pierwszy;
+    }
+    if (poprzedni == NULL) {
+        pierwszy = temp->nastepny;
+    }else {
+        poprzedni->nastepny = temp->nastepny;
+    }
+    free(temp);
+    printf("Implant usuniety \n");
+    return pierwszy;
+}
+
+implant* odczyt_z_pliku(implant *pierwszy) {
+    char nazwa_pliku[100];
+    printf("Podaj nazwe pliku z ktorego chcesz odczytac dane o implantach (z rozszerzeniem):\n");
+    scanf("%s", nazwa_pliku);
+    FILE *plik = fopen(nazwa_pliku, "r");
+    if (plik == NULL) {
+        printf("Nie udalo sie otworzyc pliku o nazwie %s!\n", nazwa_pliku);
+        return pierwszy;
+    }
+        implant *temp = NULL;
+        implant *koniec = pierwszy;
+        if (koniec != NULL) {
+            while (koniec->nastepny != NULL) {
+                koniec = koniec->nastepny;
+            }
+        }
+        char nazwa[100];
+        char prod[100];
+        char status[100];
+        int poziom_ryzyka, zapotrzebowanie, id_wlasciciela;
+        while (fscanf(plik, "%s %s %d %d %s %d", nazwa, prod, &poziom_ryzyka, &zapotrzebowanie, status, &id_wlasciciela) != EOF) {
+            temp = malloc(sizeof(implant));
+            if (temp == NULL) {
+                printf("Blad pamieci\n");
+                break;
+            }
+            strcpy(temp->nazwa, nazwa);
+            strcpy(temp->producent, prod);
+            temp->poziom_ryzyka = poziom_ryzyka;
+            temp->zapotrzebowanie_energetyczne = zapotrzebowanie;
+            temp->id_wlasciciela = id_wlasciciela;
+            temp->nastepny = NULL;
+            for (int i=0; status[i]; i++) {
+                status[i] = tolower(status[i]);
+            }
+            if (strcmp(status, "legalny") == 0) {
+                temp->status = LEGALNY;
+            }else if (strcmp(status, "szara_strefa") == 0) {
+                temp->status = SZARA_STREFA;
+            }else if (strcmp(status, "nielegalny") == 0) {
+                temp->status = NIELEGALNY;
+            }
+            if (pierwszy == NULL) {
+                pierwszy = temp;
+                koniec = pierwszy;
+            }else {
+                koniec->nastepny = temp;
+                koniec = temp;
+            }
+        }
+    printf("Poprawnie dodano dane!\n");
+    fclose(plik);
+    return pierwszy;
 }
 int main() {
     implant *pierwszy = NULL;
@@ -189,6 +321,19 @@ int main() {
                 break;
             case 2:
                 wyszukaj_implant(pierwszy);
+                break;
+            case 3:
+                zmodyfikuj_implant(pierwszy);
+                break;
+            case 4:
+
+                break;
+            case 5:
+                usun_implant(pierwszy);
+                break;
+            case 6:
+                pierwszy = odczyt_z_pliku(pierwszy);
+                wypiszliste(pierwszy);
                 break;
             case 7:
                 printf("Zakonczono program\n");
