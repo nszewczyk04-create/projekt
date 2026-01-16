@@ -1,3 +1,5 @@
-biceps cyberdyne_poland 5 44 LEGALNY 1
-antygrawitacyjny_kregoslup anonimowa_grupa 10 500 Nielegalny 2
-super_oko anonimowa_grupa 4 200 szarastrefa 3
+genialny_sluch cyberdyne_poland 5 44 LEGALNY 1
+antygrawitacyjny_kregoslup anonimowa_grupa 10 500 NIELEGALNY 2
+super_oko anonimowa_grupa 4 200 SZARA_STREFA 3
+neuralny_link hackcompany 3 122 NIELEGALNY 4
+podskorny_pancerz arasaka 7 87 LEGALNY 5
